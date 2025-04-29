@@ -21,9 +21,6 @@ bedrock_client = None
 # モデルID
 # MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-lite-v1:0")
 MODEL_ID = "https://9f94-34-16-149-91.ngrok-free.app"
-url = f"{MODEL_ID}/generate"
-with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
-    response_body = json.loads(response.read().decode('utf-8'))
 
 def lambda_handler(event, context):
     try:
@@ -103,12 +100,19 @@ def lambda_handler(event, context):
         print("Calling Bedrock invoke_model API with payload:", json.dumps(request_payload))
         
         # invoke_model APIを呼び出し
-        response = bedrock_client.invoke_model(
-            modelId=MODEL_ID,
-            body=json.dumps(request_payload),
-            contentType="application/json"
-        )
-
+#        response = bedrock_client.invoke_model(
+#            modelId=MODEL_ID,
+#            body=json.dumps(request_payload),
+#            contentType="application/json"
+#        )
+   
+        response =  {
+            "generated_text": "string",
+            "response_time": 0
+        }
+        url = f"{MODEL_ID}/generate"
+        with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
+            response_body = json.loads(response.read().decode('utf-8')) 
 
         # レスポンスを解析
         response_body = json.loads(response['body'].read())
@@ -146,16 +150,28 @@ def lambda_handler(event, context):
     except Exception as error:
         print("Error:", str(error))
         
+#        return {
+#            "statusCode": 500,
+#            "headers": {
+#                "Content-Type": "application/json",
+#                "Access-Control-Allow-Origin": "*",
+#                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+#                "Access-Control-Allow-Methods": "OPTIONS,POST"
+#            },
+#            "body": json.dumps({
+#                "success": False,
+#                "error": str(error)
+#            })
+#        }
         return {
-            "statusCode": 500,
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-                "Access-Control-Allow-Methods": "OPTIONS,POST"
-            },
-            "body": json.dumps({
-                "success": False,
-                "error": str(error)
-            })
+            "detail": [
+                {
+                    "loc": [
+                        "string",
+                        0
+                    ],
+                    "msg": "string",
+                    "type": "string"
+                }
+            ]
         }
