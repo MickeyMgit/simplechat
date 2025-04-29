@@ -4,6 +4,11 @@ import os
 import boto3
 import re  # 正規表現モジュールをインポート
 from botocore.exceptions import ClientError
+import urllib.request
+
+MODEL_ID = "https://9f94-34-16-149-91.ngrok-free.app"
+url = f"{MODEL_ID}/generate"
+        with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
 
 
 # Lambda コンテキストからリージョンを抽出する関数
@@ -70,14 +75,29 @@ def lambda_handler(event, context):
                 })
         
         # invoke_model用のリクエストペイロード
+
+#        request_payload = {
+#            "messages": bedrock_messages,
+#            "inferenceConfig": {
+#                "maxTokens": 512,
+#                "stopSequences": [],
+#                "temperature": 0.7,
+#                "topP": 0.9
+#            }
+#        }
+
+        prompt = "こんにちは"
+        max_new_tokens = 512
+        temperature = 0.7
+        top_p = 0.9
+        do_sample = True
+
         request_payload = {
-            "messages": bedrock_messages,
-            "inferenceConfig": {
-                "maxTokens": 512,
-                "stopSequences": [],
-                "temperature": 0.7,
-                "topP": 0.9
-            }
+            "prompt": prompt,
+            "max_new_tokens": max_new_tokens,
+            "temperature": temperature,
+            "top_p": top_p,
+            "do_sample": do_sample
         }
         
         print("Calling Bedrock invoke_model API with payload:", json.dumps(request_payload))
@@ -88,7 +108,8 @@ def lambda_handler(event, context):
             body=json.dumps(request_payload),
             contentType="application/json"
         )
-        
+
+
         # レスポンスを解析
         response_body = json.loads(response['body'].read())
         print("Bedrock response:", json.dumps(response_body, default=str))
