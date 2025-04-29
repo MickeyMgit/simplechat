@@ -6,9 +6,6 @@ import re  # 正規表現モジュールをインポート
 from botocore.exceptions import ClientError
 import urllib.request
 
-url = f"{MODEL_ID}/generate"
-with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
-
 
 # Lambda コンテキストからリージョンを抽出する関数
 def extract_region_from_arn(arn):
@@ -24,6 +21,9 @@ bedrock_client = None
 # モデルID
 # MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-lite-v1:0")
 MODEL_ID = "https://9f94-34-16-149-91.ngrok-free.app"
+url = f"{MODEL_ID}/generate"
+with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
+    response_body = json.loads(response.read().decode('utf-8'))
 
 def lambda_handler(event, context):
     try:
@@ -86,8 +86,7 @@ def lambda_handler(event, context):
 #            }
 #        }
 
-        string = "こんにちは"
-        prompt = str(string)
+        prompt = "string"
         max_new_tokens = 512
         temperature = 0.7
         top_p = 0.9
