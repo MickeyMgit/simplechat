@@ -111,8 +111,11 @@ def lambda_handler(event, context):
             "response_time": 0
         }
         url = f"{MODEL_ID}/generate"
-        with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
-            response_body = json.loads(response.read().decode('utf-8')) 
+        with urllib.request.urlopen(req) as response:
+	        theHttpStatus  = response.getcode() 
+            
+#        with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
+#            response_body = json.loads(response.read().decode('utf-8')) 
 
         # レスポンスを解析
         response_body = json.loads(response['body'].read())
