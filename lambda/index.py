@@ -83,20 +83,18 @@ def lambda_handler(event, context):
 #            }
 #        }
 
-        prompt = "string"
-        max_new_tokens = 512
-        temperature = 0.7
-        top_p = 0.9
-        do_sample = True
-
         request_payload = {
-            "prompt": prompt,
-            "max_new_tokens": max_new_tokens,
-            "temperature": temperature,
-            "top_p": top_p,
-            "do_sample": do_sample
+            "prompt": "string",
+            "max_new_tokens": 100,
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "do_sample": True
         }
         
+	response = {
+		"generated_text": "string",
+  		"response_time": 0
+	}
         print("Calling Bedrock invoke_model API with payload:", json.dumps(request_payload))
         
         # invoke_model APIを呼び出し
@@ -106,26 +104,21 @@ def lambda_handler(event, context):
 #            contentType="application/json"
 #        )
    
-#        response =  {
-#            "generated_text": "string",
-#            "response_time": 0
-#        }
-#        url = f"{MODEL_ID}/generate"
 #        with urllib.request.urlopen(req) as response:
 #	        theHttpStatus  = response.getcode() 
 
 	url = f"{MODEL_ID}/generate"  
         # FastAPI呼び出し
-        response = urllib.request.Request(
-            url=url,
-            data=json.dumps(request_payload).encode('utf-8'),  # JSONデータをバイト列に変換
-            headers={'Content-Type': 'application/json'},
-            method='POST'
-        )
+#        response = urllib.request.Request(
+#            url=url,
+#            data=json.dumps(request_payload).encode('utf-8'),  # JSONデータをバイト列に変換
+#            headers={'Content-Type': 'application/json'},
+#            method='POST'
+#        )
 
 	    
-#        with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
-#            response_body = json.loads(response.read().decode('utf-8')) 
+        with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
+            response_body = json.loads(response.read().decode('utf-8')) 
 
         # レスポンスを解析
         response_body = json.loads(response['body'].read())
