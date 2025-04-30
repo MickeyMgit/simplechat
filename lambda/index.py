@@ -20,7 +20,7 @@ bedrock_client = None
 
 # モデルID
 # MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-lite-v1:0")
-MODEL_ID = "https://9f94-34-16-149-91.ngrok-free.app"
+MODEL_ID = "https://7816-34-141-225-203.ngrok-free.app"
 
 def lambda_handler(event, context):
     try:
@@ -106,14 +106,24 @@ def lambda_handler(event, context):
 #            contentType="application/json"
 #        )
    
-        response =  {
-            "generated_text": "string",
-            "response_time": 0
-        }
-        url = f"{MODEL_ID}/generate"
-        with urllib.request.urlopen(req) as response:
-	        theHttpStatus  = response.getcode() 
-            
+#        response =  {
+#            "generated_text": "string",
+#            "response_time": 0
+#        }
+#        url = f"{MODEL_ID}/generate"
+#        with urllib.request.urlopen(req) as response:
+#	        theHttpStatus  = response.getcode() 
+
+	url = f"{MODEL_ID}/generate"  
+        # FastAPI呼び出し
+        response = urllib.request.Request(
+            url=url,
+            data=json.dumps(request_payload).encode('utf-8'),  # JSONデータをバイト列に変換
+            headers={'Content-Type': 'application/json'},
+            method='POST'
+        )
+
+	    
 #        with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
 #            response_body = json.loads(response.read().decode('utf-8')) 
 
