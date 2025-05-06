@@ -82,13 +82,18 @@ def lambda_handler(event, context):
 #                "topP": 0.9
 #            }
 #        }
-
+	    
+#        response = bedrock_client.invoke_model(
+#            modelId=MODEL_ID,
+#            body=json.dumps(request_payload),
+#            contentType="application/json"
+#        )
         request_payload = {
             "prompt": "string",
-            "max_new_tokens": 100,
+            "max_new_tokens": 512,
             "temperature": 0.7,
             "top_p": 0.9,
-            "do_sample": True
+            "do_sample": true
         }
         
 	response = {
@@ -98,27 +103,11 @@ def lambda_handler(event, context):
         print("Calling Bedrock invoke_model API with payload:", json.dumps(request_payload))
         
         # invoke_model APIを呼び出し
-#        response = bedrock_client.invoke_model(
-#            modelId=MODEL_ID,
-#            body=json.dumps(request_payload),
-#            contentType="application/json"
-#        )
-   
-#        with urllib.request.urlopen(req) as response:
-#	        theHttpStatus  = response.getcode() 
-
-	url = f"{MODEL_ID}/generate"  
-        # FastAPI呼び出し
-#        response = urllib.request.Request(
-#            url=url,
-#            data=json.dumps(request_payload).encode('utf-8'),  # JSONデータをバイト列に変換
-#            headers={'Content-Type': 'application/json'},
-#            method='POST'
-#        )
-
 	    
-        with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
-            response_body = json.loads(response.read().decode('utf-8')) 
+        # FastAPI呼び出し
+	url = f"{MODEL_ID}/generate"
+            with urllib.request.urlopen(url, data=json.dumps(request_payload).encode('utf-8')) as response:
+                response_body = json.loads(response.read().decode('utf-8'))
 
         # レスポンスを解析
         response_body = json.loads(response['body'].read())
@@ -156,28 +145,17 @@ def lambda_handler(event, context):
     except Exception as error:
         print("Error:", str(error))
         
-#        return {
-#            "statusCode": 500,
-#            "headers": {
-#                "Content-Type": "application/json",
-#                "Access-Control-Allow-Origin": "*",
-#                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-#                "Access-Control-Allow-Methods": "OPTIONS,POST"
-#            },
-#            "body": json.dumps({
-#                "success": False,
-#                "error": str(error)
-#            })
-#        }
         return {
-            "detail": [
-                {
-                    "loc": [
-                        "string",
-                        0
-                    ],
-                    "msg": "string",
-                    "type": "string"
-                }
-            ]
+            "statusCode": 500,
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "OPTIONS,POST"
+            },
+            "body": json.dumps({
+                "success": False,
+                "error": str(error)
+            })
         }
+
